@@ -5,6 +5,8 @@ from app.models.users_db import Database
 from app.models.users_db import customers
 from flask_bcrypt import Bcrypt
 from app.models.products.products_db import Products
+from app.models.orders.order_db import Orders
+import datetime
 
 # ..... bycrpt waye
 bcrypt  =Bcrypt()
@@ -25,11 +27,12 @@ def check_connection():
         mysql_connect.make_connection()
         trainee = customers(mysql_connect.connection)
         products_instance = Products(mysql_connect.connection)
+        Orders_instance = Orders(mysql_connect.connection)
 
-        return True, trainee,products_instance
+        return True, trainee,products_instance,Orders_instance
     except Exception as e:
         print(f'')
-        return False, f'Error: {e}.'
+        return False, None, None,None
 
 
 app.config["SECRET_KEY"] = "abdi@12"
@@ -115,7 +118,7 @@ def user_register():
 @app.route("/E-keyboard/login", methods = ["POST", "GET"])
 def user_login():
     print(f"userka ku jiro session: {session.get('user_email')}")
-    connection_status, customers, _ = check_connection()
+    connection_status, _,customers, _ = check_connection()
     if session.get('user_email'):
         return redirect(url_for('home_page'))
     else:
@@ -167,63 +170,128 @@ def user_logout():
 def home_page():
     if session.get('user_email'):
         message = ""
-        connection_status, _, products_instance = check_connection()
+        connection_status, _, products_instance, Orders_instance = check_connection()
+        user_id = session.get("user_id")
+
         if request.method == "GET":
             products = products_instance.dispay_product_info()
-            user_id = session.get("user_id")
             count_product_carts = products_instance.count_product_carts(user_id)
             product_carts = products_instance.display_product_cart(user_id)
-            return render_template("productHomePage/index.html", products=products, product_carts=product_carts, count_product_carts=count_product_carts)
+
+            show_order = Orders_instance.display_orders(user_id)
+
+            order_to_dict = []
+
+            for order in show_order:
+                formatted_date = order[11].strftime("%Y/%m/%d") if order[11] else ""
+                order_to_dict.append({
+                    "order_id": order[0],
+                    "user_name": order[1] + order[2],
+                    "product_name": order[3],
+                    "quantity": order[4],
+                    "total": order[5],
+                    "order_status": order[6],
+                    "billing_name": order[7],
+                    "billing_email": order[8],
+                    "billing_address": order[9],
+                    "billing_city": order[10],
+                    "order_date": formatted_date
+                })
+            print(f"views show orders: {order_to_dict}")
+            return render_template("productHomePage/index.html", products=products, product_carts=product_carts, count_product_carts=count_product_carts, order_to_dict=order_to_dict)
+        
         elif request.method == "POST":
-            user_id = session.get("user_id")
-            product_quantities = request.json
+            if request.content_type == 'application/json':
+                # This is the JSON request for updating product quantities
+                product_quantities = request.json
+                print(f"Received product quantities: {product_quantities}")  # Debugging line
+                for product_id, quantity in product_quantities.items():
+                    quantity = int(quantity)
+                    print(f"Updating product_id: {product_id} with quantity: {quantity}")  # Debugging line
+                    inventory_quantity = products_instance.display_product_inventory(product_id)
 
-            print(f"Received product quantities: {product_quantities}")  # Debugging line
-            for product_id, quantity in product_quantities.items():
-                quantity = int(quantity)
-                print(f"Updating product_id: {product_id} with quantity: {quantity}")  # Debugging line
-                inventory_quantity = products_instance.display_product_inventory(product_id)
+                    if inventory_quantity >= quantity:
+                        update_product_cart = products_instance.update_product_cart(quantity, user_id, product_id)
+                        print(f"Updated product cart: {update_product_cart}")  # Debugging line
+                    else:
+                        message = "Insufficient stock for product ID {}".format(product_id)
+                        products = products_instance.dispay_product_info()
+                        product_carts = products_instance.display_product_cart(user_id)
+                        count_product_carts = products_instance.count_product_carts(user_id)
+                        return render_template("productHomePage/index.html", products=products, product_carts=product_carts, message=message, count_product_carts=count_product_carts)
 
-                if inventory_quantity >= quantity:
-                    update_product_cart = products_instance.update_product_cart(quantity, user_id, product_id)
-                    print(f"Updated product cart: {update_product_cart}")  # Debugging line
+                return redirect(url_for('place_order'))
+            else:
+                # This is the form submission for cancelling an order
+                order_id = request.form.get("order_id")
+                print(f"click order_id: {order_id}")
+
+                if order_id:
+                    # Call your function to cancel the order
+                    order_status = "canceled"
+                    Orders_instance.cancel_order(user_id, order_id,order_status)
+                    message = f"Order {order_id} has been cancelled."
                 else:
-                    message = "Insufficient stock for product ID {}".format(product_id)
-                    products = products_instance.dispay_product_info()
-                    product_carts = products_instance.display_product_cart(user_id)
-                    return render_template("productHomePage/index.html", products=products, product_carts=product_carts, message=message)
+                    message = "Failed to cancel the order."
 
-            return redirect(url_for('place_order'))
+                products = products_instance.dispay_product_info()
+                product_carts = products_instance.display_product_cart(user_id)
+                count_product_carts = products_instance.count_product_carts(user_id)
+                show_order = Orders_instance.display_orders(user_id)
+
+                order_to_dict = []
+                for order in show_order:
+                    formatted_date = order[11].strftime("%Y/%m/%d") if order[11] else ""
+                    order_to_dict.append({
+                        "order_id": order[0],
+                        "user_name": order[1] + order[2],
+                        "product_name": order[3],
+                        "quantity": order[4],
+                        "total": order[5],
+                        "order_status": order[6],
+                        "billing_name": order[7],
+                        "billing_email": order[8],
+                        "billing_address": order[9],
+                        "billing_city": order[10],
+                        "order_date": formatted_date
+                    })
+
+                return render_template("productHomePage/index.html", products=products, product_carts=product_carts, count_product_carts=count_product_carts, order_to_dict=order_to_dict, message=message)
     else:
         return redirect(url_for('user_login'))
 
 
 
 
-
-@app.route("/E-keyboard/place-order", methods=["GET", "POST"])
-def place_order():
-    if session.get('user_email'):
-        connection_status, _, products_instance = check_connection()
-        if request.method == "GET":  
-            user_id = session.get("user_id")
-            product_carts = products_instance.display_product_cart(user_id)
-            # print(f"all product in place order: {[product_carts]}")
-            return render_template("productHomePage/place_order.html",product_carts = product_carts)
+# @app.route("/E-keyboard/place-order", methods=["POST", "GET"])
+# def place_order():
+#     if session.get('user_email'):
+#         connection_status, _, products_instance = check_connection()
+#         if request.method == "GET":  
+#             user_id = session.get("user_id")
+#             product_carts = products_instance.display_product_cart(user_id)
+#             return render_template("productHomePage/place_order.html", product_carts=product_carts)
            
-        elif request.method == "POST":
-            user_id = session.get("user_id")
-            customer_name = request.form.get("customer_name")
-            customer_email = request.form.get("customer_email")
-            customer_address = request.form.get("customer_address")
-            customer_city = request.form.get("customer_city")
-            total_amount = request.form.get("total_amount")
+#         elif request.method == "POST":
+#             print("i am post")
+#             user_id = session.get("user_id")
+#             customer_name = request.form.get("customer_name")
+#             customer_email = request.form.get("customer_email")
+#             customer_address = request.form.get("customer_address")
+#             customer_city = request.form.get("customer_city")
+
+#             product_ids = request.form.getlist("product_id[]")
+#             product_qtys = request.form.getlist("product_qty[]")
+#             product_totals = request.form.getlist("product_total[]")
             
-            print(f"customer_name: {customer_name} customer_email:{customer_email} \n customer_address: {customer_address} customer_city: {customer_city} \n total_amount: {total_amount} product_total_: {product_total_}")
-            # Logic to place the order
-            return redirect(url_for('place_order'))
-    else:
-        return redirect(url_for('user_login'))
+#             print(f"customer_name: {customer_name} customer_email:{customer_email} \n customer_address: {customer_address} customer_city: {customer_city} \n product_ids: {product_ids} product_qtys: {product_qtys} product_totals: {product_totals}")
+
+#             # Logic to place the order
+
+#             return redirect(url_for('home_page'))
+#     else:
+#         return redirect(url_for('user_login'))
+
 
 
 
@@ -231,7 +299,7 @@ def place_order():
 @app.route('/product/<int:product_id>', methods=["GET", "POST"])
 def product_detail(product_id):
     # Check database connection
-    connection_status, _, products_instance = check_connection()
+    connection_status, _, products_instance,_ = check_connection()
     if not connection_status:
         return "Database connection error", 500
 

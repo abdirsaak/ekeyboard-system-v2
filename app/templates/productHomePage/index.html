@@ -57,7 +57,7 @@
         </div>
 <!-- ............... cardt -->
 <div class="flex flex-row justify-end mt-6 ml-52 md:ml-0 lg:ml-0 md:block md:flex md:flex-row">
-    <h3 class="pt-2 text-black lg:bg-black lg:w-[150px] lg:text-white rounded-md flex justify-center">History</h3>
+    <h3 class="pt-2 text-black lg:bg-black lg:w-[150px] lg:text-white rounded-md flex justify-center history-btn cursor-pointer">History</h3>
     <!-- .........cart icon -->
     <div class="flex px-4 items-center cursor-pointer cart_btn "> 
         <span class="mr-4 font-bold text-black lg:text-white">Cart</span>
@@ -146,8 +146,77 @@
         </div>
     </div>
 
-  
 </section>
+ <!-- History Modal -->
+ <div id="history-modal" class="hidden fixed z-50 inset-0 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="bg-white w-[380px] md:w-[690px] lg:w-[900px] p-4 rounded-lg shadow-lg">
+            <div class="flex justify-between items-center pb-2 border-b">
+                <h2 class="text-lg font-semibold">History</h2>
+                <button id="close-history-modal" class="text-gray-600">&times;</button>
+            </div>
+            <div class="mt-4">
+                <div class="container mx-auto px-4 py-8">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200">
+                            <thead>
+                                <tr>
+                                    <th class="px-4 py-2 border-b">Name</th>
+                                    <th class="px-4 py-2 border-b">Product Name</th>
+                                    <th class="px-4 py-2 border-b">Quantity</th>
+                                    <th class="px-4 py-2 border-b">Total</th>
+                                    <th class="px-4 py-2 border-b">Order Status</th>
+                                    <th class="px-4 py-2 border-b">Billing Name</th>
+                                    <th class="px-4 py-2 border-b">Billing Email</th>
+                                    <th class="px-4 py-2 border-b">Billing Address</th>
+                                    <th class="px-4 py-2 border-b">Billing City</th>
+                                    <th class="px-4 py-2 border-b">Order Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if order_to_dict %}
+                                    {% for order in order_to_dict %}
+                                    
+                                        <tr>
+                                            <td class="px-4 py-2 border-b">{{ order.user_name }}</td>
+                                            <td class="px-4 py-2 border-b">{{ order.product_name }}  </td>
+                                            <td class="px-4 py-2 border-b">{{ order.quantity }}</td>
+                                            <td class="px-4 py-2 border-b">{{ order.total }}</td>
+                                            <td class="px-4 py-2 border-b">{{ order.order_status }}</td>
+                                            <td class="px-4 py-2 border-b">{{ order.billing_name }}</td>
+                                            <td class="px-4 py-2 border-b">{{ order.billing_email }}</td>
+                                            <td class="px-4 py-2 border-b">{{ order.billing_address }}</td>
+                                            <td class="px-4 py-2 border-b">{{ order.billing_city }}</td>
+                                            <td class="px-4 py-2 border-b">{{ order.order_date  }}</td>
+                                            <td>
+                                                <form action="{{url_for("home_page")}}" method="post">
+                                                    <input type="hidden" name="order_id" value="{{ order.order_id }}">
+                                                    <div class="hide_order_btn">
+                                                        <button type="submit" class="btn_cancel bg-rose-600 text-white w-[110px] h-[40px] rounded-md mr-4">Cancel order</button>
+                                                    </div>
+                                                </form>
+                                            </td>
+                                         
+                                        </tr>
+
+                                  
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td class="px-4 py-2 border-b" colspan="10">
+                                            <h4>Wax dalab ma sameynin</h4>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
 
 
 <!-- .......end section cart -->
@@ -321,6 +390,23 @@
 
 
 <script>
+
+    let hide_order_btn = document.querySelectorAll(".hide_order_btn")
+    let btn_cancel = document.querySelector(".btn_cancel")
+    const cance_button =  () => {
+        hide_order_btn.forEach((eahc_btn) => {
+            eahc_btn.classList.add("hidden")
+        })
+    }
+    btn_cancel.addEventListener("click",cance_button)
+
+
+    setTimeout(() => {
+        cance_button()
+    }, 60000);
+
+
+
   
   document.querySelector('.checkout-button').addEventListener('click', () => {
     const productQuantities = {};
@@ -351,6 +437,31 @@
         console.error('Error during checkout:', error);
     });
 });
+
+
+
+
+
+   // JavaScript to handle opening and closing the History modal
+   document.addEventListener('DOMContentLoaded', (event) => {
+        const historyButton = document.querySelector('.history-btn');
+        const historyModal = document.getElementById('history-modal');
+        const closeHistoryModal = document.getElementById('close-history-modal');
+
+        historyButton.addEventListener('click', () => {
+            historyModal.style.display = 'block';
+        });
+
+        closeHistoryModal.addEventListener('click', () => {
+            historyModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === historyModal) {
+                historyModal.style.display = 'none';
+            }
+        });
+    });
 
 
 

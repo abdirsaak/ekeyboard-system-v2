@@ -31,6 +31,20 @@
             <a href="/" class="text-white">Home</a>
         </nav>
     </header>
+
+    <div class="">
+        {% with messages = get_flashed_messages() %} {% if messages %}
+        <div id="flash-message" class="flex justify-center items-center w-[200px] h-[50px] bg-red-500 text-white rounded-md">
+
+          <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %} {% endwith %}
+    </div>
+
     
     <!-- billing address way Modal -->
     <div class="flex flex-col md:flex md:flex-row md:justify-center md:items-center md:h-[90vh]">
@@ -38,7 +52,7 @@
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-semibold">Billing Details</h2>
             </div>
-            <form id="billing-form" class="flex-grow mb-4" action="/E-keyboard/place-order" method="POST">
+            <form class="flex-grow mb-4" action="{{url_for("place_order")}}" method="POST">
                 <div class="mb-4">
                     <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
                     <input type="text" id="name" name="customer_name" class="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
@@ -60,7 +74,7 @@
                     <input class="hidden" name="total_amount" type="text" id="total_amount">
                     <button type="submit" class="bg-black text-white px-4 py-2 rounded">Submit</button>
                 </div>
-            </form>
+        
         </div>
        
 
@@ -93,10 +107,15 @@
                       
                         <h3 class="item_total">{{ product_cart[2] * product_cart[4] }}  </h3>
                     </div>
+                      <!-- Hidden input fields for product details -->
+                      <input type="hidden" name="product_id[]" value="{{ product_cart[0] }}">
+                      <input type="hidden" name="product_qty[]" value="{{ product_cart[4] }}">
+                      <input type="hidden" name="product_total[]" value="{{ product_cart[2] * product_cart[4] }}">
                 </div>
                 {% endfor %}
             </div>
         </div>
+    </form>
     </div>
 
     
@@ -108,7 +127,7 @@
         porduct_item.forEach((item) => {
             total_amount += (parseFloat(item.textContent))
         })
-        sub_total.innerHTML = `<h2>Sub total: $${total_amount}`
+        sub_total.innerHTML = `<h2>Sub total: $ ${total_amount}`
       </script>
     
     

@@ -219,8 +219,22 @@ class Products:
         except Exception as e:
             print(f"error ayaa jiro, product_qty: {e}")
             return False, f"error: {e}"
-    # display_product_carts
-        pass
+        
+
+    # clear_product_cart_after_place_order
+
+    def clear_cart_after_place_order(self, user_id):
+        sql = "DELETE FROM product_carts WHERE user_id = %s"
+        try:
+            self.cursor.execute(sql, (user_id,))
+            # No need to commit after a SELECT query
+            self.connection.commit()
+            return True, "si sax ayaa loo clear gareeyey porduct carts"
+        except Exception as e:
+            print(f"error ayaa jiro, clear gareynta product cart: {e}")
+            return False, f"error: {e}"
+    
+
         
 
 
