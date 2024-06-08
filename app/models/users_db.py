@@ -143,8 +143,53 @@ class customers:
         except Exception as e:
             print(f'Error: {e}')
             return False
+        
+    def  display_user_info(self, user_id):
+        sql = "SELECT * FROM users where user_id = %s"
 
+        try:
+            print(f"Executing SQL: {sql} with user_id: {user_id}")  # Debugging line
+            self.cursor.execute(sql, (user_id,))
+            user_info = self.cursor.fetchall()
+
+            print(f"user info database: {user_info}")
+            return user_info
+        except Exception as e:
+            print(f"error on display user info waye: {e}")
+
+            return False
+    
+    def update_user_info(self, user_id, f_name, s_name, user_email, user_password, user_phone, user_address):
+        sql = """
+        UPDATE users
+        SET f_name = %s,
+            s_name = %s,
+            user_email = %s,
+            user_password = %s,
+            user_phone = %s,
+            user_address = %s
+        WHERE user_id = %s
+        """
+
+        try:
+            self.cursor.execute(sql, (f_name, s_name, user_email, user_password, user_phone, user_address, user_id))
+            self.connection.commit()
+            return True, "User information updated successfully"
+        except Exception as e:
+            print(f"Error while updating user info: {e}")
+            return False, "Failed to update user information"
+
+        
+
+
+    
+   
+
+
+
+   
  
+    
 
    
 

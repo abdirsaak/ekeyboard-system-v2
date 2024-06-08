@@ -220,6 +220,20 @@ class Products:
             print(f"error ayaa jiro, product_qty: {e}")
             return False, f"error: {e}"
         
+    def remove_cart(self, user_id, product_id):
+        sql = "DELETE FROM product_carts WHERE product_id = %s AND user_id = %s"
+
+        try:
+            self.cursor.execute(sql, (product_id, user_id))  
+            self.connection.commit()
+            return True, "Product successfully removed from cart."  
+
+        except Exception as e:
+            print(f"Error removing product from cart: {e}")
+          
+            return False, "An error occurred."  
+
+        
 
     # clear_product_cart_after_place_order
 

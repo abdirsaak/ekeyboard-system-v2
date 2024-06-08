@@ -78,13 +78,40 @@ class Orders:
 
             self.cursor.execute(sql, (user_id,))
             orders = self.cursor.fetchall()
-            print(f"orders based on user_id: {orders}")
+            # print(f"orders based on user_id: {orders}")
 
             return orders
 
 
         except Exception as e:
             print(f"error while displaying orders: {e}")
+
+            return False
+        
+
+    def display_orders_by_admin(self):
+        sql = """
+         
+           select orders.order_id,users.f_name,users.s_name,products.Product_name,
+		orders.product_qty,orders.total,orders.order_status,orders.billing_name,
+        orders.billing_email,orders.billing_address,orders.billing_city,orders.order_date,
+        orders.user_id
+		from 
+		orders join products on orders.product_id = products.product_id
+        join Users on orders.user_id  =users.user_id ;
+           
+             """
+        try:
+
+            self.cursor.execute(sql)
+            orders = self.cursor.fetchall()
+            # print(f"orders based on user_id: {orders}")
+
+            return orders
+
+
+        except Exception as e:
+            print(f"error while displaying : {e}")
 
             return False
     
@@ -106,6 +133,10 @@ class Orders:
            
             print(f"Failed to update order status: {e}")
             return False
+    
+    
+
+    
 
     
 

@@ -27,7 +27,76 @@
 
 
 
-    <h1>Welcome to orders</h1>
+        <div  class=" ">
+            <div class="">
+                <div class="w-full  p-4 rounded-lg shadow-lg">
+                    <div class="flex justify-between items-center pb-2 border-b">
+                        <h2 class="text-lg font-semibold">orders</h2>
+                       
+                    </div>
+                    <div class="mt-4">
+                        <div class="container mx-auto px-4 py-8">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full bg-white border border-gray-200">
+                                    <thead>
+                                        <tr>
+                                            <th class="px-4 py-2 border-b">order id</th>
+                                            <th class="px-4 py-2 border-b">Name</th>
+                                            <th class="px-4 py-2 border-b">Product Name</th>
+                                            <th class="px-4 py-2 border-b">Quantity</th>
+                                            <th class="px-4 py-2 border-b">Total</th>
+                                            <th class="px-4 py-2 border-b">Order Status</th>
+                                            <th class="px-4 py-2 border-b">Billing Name</th>
+                                            <th class="px-4 py-2 border-b">Billing Email</th>
+                                            <th class="px-4 py-2 border-b">Billing Address</th>
+                                            <th class="px-4 py-2 border-b">Billing City</th>
+                                            <th class="px-4 py-2 border-b">Order Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                 
+                                            {% for order in all_order_to_dict %}
+                                            <tr>
+                                                <td class="px-4 py-2 border-b">{{ order.order_id }}</td>
+                                                <td class="px-4 py-2 border-b">{{ order.user_name }}</td>
+                                                <td class="px-4 py-2 border-b">{{ order.product_name }}</td>
+                                                <td class="px-4 py-2 border-b">{{ order.quantity }}</td>
+                                                <td class="px-4 py-2 border-b">{{ order.total }}</td>
+                                                {% if order.order_status == "completed" %}
+                                                <td class="px-4 py-2 border-b text-green-500 font-bold">{{ order.order_status }}</td>
+                                                {% else %}
+                                                <td class="px-4 py-2 border-b text-rose-600 font-bold">{{ order.order_status }}</td>
+                                                {% endif %}
+
+                                                <td class="px-4 py-2 border-b">{{ order.billing_name }}</td>
+                                                <td class="px-4 py-2 border-b">{{ order.billing_email }}</td>
+                                                <td class="px-4 py-2 border-b">{{ order.billing_address }}</td>
+                                                <td class="px-4 py-2 border-b">{{ order.billing_city }}</td>
+                                                <td class="px-4 py-2 border-b">{{ order.order_date }}</td>
+                                                <td>
+                                                    <form action="{{ url_for("completed_Orders") }}" method="post">
+                                                        <input type="hidden" name="order_id" value="{{ order.order_id }}">
+                                                        <input type="hidden" name="user_id" value="{{ order.user_id }}">
+                                                        <div class=" ">
+                                                            <button type="submit" class="  bg-rose-600 text-white w-[110px] h-[40px] rounded-md mr-4">Cancel order</button>
+                                                        </div>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                      
+                                    </tbody>
+                                    
+                                </table>
+                                
+                                
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
     
 </body>
 </html>

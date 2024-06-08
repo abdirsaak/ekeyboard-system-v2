@@ -117,18 +117,19 @@
         </div>
     </form>
     </div>
+<script>
+    let porduct_item = document.querySelectorAll(".item_total")
+let sub_total = document.querySelector("#sub_total")
+let total_amount = 0;
+porduct_item.forEach((item) => {
+    total_amount += (parseFloat(item.textContent))
+})
+sub_total.innerHTML = `<h2>Sub total: $ ${total_amount}`
 
+</script>
     
-      <script>
-
-        let porduct_item = document.querySelectorAll(".item_total")
-        let sub_total = document.querySelector("#sub_total")
-        let total_amount = 0;
-        porduct_item.forEach((item) => {
-            total_amount += (parseFloat(item.textContent))
-        })
-        sub_total.innerHTML = `<h2>Sub total: $ ${total_amount}`
-      </script>
+     
+      <script src="{{ url_for('static', filename='/js/order_history.js') }}"></script>
     
     
 </body>

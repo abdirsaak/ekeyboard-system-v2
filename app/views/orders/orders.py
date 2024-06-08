@@ -43,11 +43,49 @@ app.config["SECRET_KEY"] = "abdi@12"
 
 
 
-@app.route("/E-keyboard/admin/login/completed_Orders")
+@app.route("/E-keyboard/admin/login/completed_Orders", methods = ["GET", "POST"])
 def completed_Orders():
     if session.get('admin_email'):
-        print(f"admin session: {session.get('admin_email')}")
-        return render_template("orders/order.html")
+        connection_status, trainee, products_instance, Orders_instance = check_connection()
+        if connection_status:
+            if request.method == "GET":
+                get_all_orders = Orders_instance.display_orders_by_admin()
+                all_order_to_dict = []
+
+                for order in get_all_orders:
+                    formatted_date = order[11].strftime("%Y/%m/%d") if order[11] else ""
+                    all_order_to_dict.append({
+                        "order_id": order[0],
+                        "user_name": order[1] + order[2],
+                        "product_name": order[3],
+                        "quantity": order[4],
+                        "total": order[5],
+                        "order_status": order[6],
+                        "billing_name": order[7],
+                        "billing_email": order[8],
+                        "billing_address": order[9],
+                        "billing_city": order[10],
+                        "order_date": formatted_date,
+                        "user_id": order[12]
+                    })
+                return render_template("orders/order.html", all_order_to_dict = all_order_to_dict)
+
+           
+        
+
+            else:
+                order_id = request.form.get("order_id")
+                user_id = request.form.get("user_id")
+                print(f"value of user_id: {user_id} vaue of order_id: {order_id}")
+                order_status = "canceled"
+                cancel_order  = Orders_instance.cancel_order(user_id,order_id,order_status)
+                print(f"canceled order succes: {cancel_order}")
+
+                return redirect(url_for("completed_Orders"))
+        else:
+            print("connecton falided")
+            return render_template("orders/order.html")
+    
     else:
         return redirect(url_for('admin_login'))
     
@@ -88,7 +126,7 @@ def place_order():
 
                 # Loop through each product and insert it into the database
                 for product_id, product_qty, product_total in zip(product_ids, product_qtys, product_totals):
-                    order_status = "pending"  # Example status, change as needed
+                    order_status = "Completed"  # Example status, change as needed
                     Orders_instance.insert_orders(
                         user_id, product_id, product_qty, product_total, order_status,
                         customer_name, customer_email, customer_address, customer_city
@@ -135,20 +173,3 @@ def display_orders():
        
        
        
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-        print(f"admin session: {session.get('admin_email')}")
-        return render_template(productHomePage/index.html)

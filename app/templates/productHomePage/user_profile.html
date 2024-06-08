@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>user_profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <header class="flex items-center justify-between bg-rose-600 h-[60px] p-4">
+        <h1 class="text-white text-[28px] font-mono">
+            <a href="/">E-keyboard</a>
+        </h1>
+        <nav>
+            <a href="/" class="text-white">Home</a>
+        </nav>
+    </header>
+
+
+
+
+<section>
+    <div class="    flex justify-center ">
+        <div class=" p-6 rounded-lg  w-4/5 md:w-2/5 lg:w-[500px] mr-10">
+          
+           
+            <h2 class="text-xl font-bold mb-4">User Profile</h2>
+                {% for user in user_info %}
+                <div class="flex flex-col">
+                    <div>
+                        <div class="flex justify-between items-center py-2">
+                            <p  class="mb-2">First Name: {{ user[1] }}</p>
+                           
+                        </div>
+                        <div class="flex justify-between items-center py-2">
+                            <p class="mb-2">Second Name: {{ user[2] }}</p>
+                         
+                        </div>
+                        <div class="flex justify-between items-center py-2">
+                            <p class="flex">Email: {{ user[3] }}</p>
+                           
+                        </div>
+                        <div class="flex justify-between items-center py-2">
+                            <p >Phone: {{ user[5] }}</p>
+                         
+                        </div>
+                        <div class="flex justify-between items-center py-2">
+                            <p class="w-[200px]">Address: {{ user[6] }}</p>
+                         
+                        </div>
+    
+                        <div class="flex justify-between mt-20">
+                             <span> <button class="edi_f_name_tBtn  pl-2 bg-black text-white w-[150px] h-[40px] rounded-md">edit profile<span class="pl-2"><i class="fa fa-edit"></i></span></button></span>
+                             
+                             <button class="bg-rose-600 w-[150px] h-[40px] text-white rounded-md"><a href="{{ url_for("user_logout") }}">Logout</a></button>
+                            </div>
+                       
+                    </div>
+                </div>
+    
+                         <!-- Modal for user info -->
+    <div id="Fn_editModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-[480px]  lg:w-[500px] ">
+            <span id="closeEditModal" class="text-red-500 text-2xl font-bold cursor-pointer float-right">x</span>
+            <h2 class="text-xl font-bold mb-4">Edit Information</h2>
+            <form  action="{{ url_for('user_profile') }}" method="post">
+                <!-- Input field for user info -->
+                 <!-- ....... usernames -->
+                  <div class="flex">
+                      <div class="mb-4">
+                          <label for="info" class="block text-gray-700 text-sm font-bold mb-2">First Name</label>
+                          <input type="text"  name="f_name" value="{{ user[1] }}" class="shadow appearance-none border rounded w-[200px] py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                      </div>
+                      <div class="mb-4 px-2">
+                          <label for="info" class="block text-gray-700 text-sm font-bold mb-2">Second name</label>
+                          <input type="text"  name="s_name" value="{{ user[2] }}" class="shadow appearance-none border rounded w-[200px] py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                      </div>
+    
+                  </div>
+                 <!-- ....... email -->
+                  <div class="flex my-2">
+                      <div class="mb-4">
+                          <label for="info" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                          <input type="text"  name="user_email" value="{{ user[3] }}" class="shadow appearance-none border rounded w-[200px] py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                      </div>
+                      <div class="mb-4 px-2">
+                          <label for="info" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                          <input type="text"  name="user_password" value="" class="shadow appearance-none border rounded w-[200px] py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                      </div>
+    
+                  </div>
+                 <!-- ....... email -->
+                  <div class="flex my-2">
+                      <div class="mb-4">
+                          <label for="info" class="block text-gray-700 text-sm font-bold mb-2">Phone</label>
+                          <input type="text"  name="user_phone" value="{{ user[5] }}" class="shadow appearance-none border rounded w-[200px] py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                      </div>
+                      <div class="mb-4 px-2">
+                          <label for="info" class="block text-gray-700 text-sm font-bold mb-2">address</label>
+                          <input type="text"  name="user_address" value="{{ user[6] }}" class="shadow appearance-none border rounded w-[200px] py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                      </div>
+    
+                  </div>
+    
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Update</button>
+            </form>
+        </div>
+    </div>
+    
+                {% endfor %}
+           
+        </div>
+    </div>
+    
+</section>
+    
+
+
+
+<script src="{{ url_for('static', filename='/js/user_profile.js') }}"></script>
+</body>
+</html>

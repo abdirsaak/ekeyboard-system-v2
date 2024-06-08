@@ -1,4 +1,4 @@
-const productsPerPage = 8;
+const productsPerPage = 6;
 let currentPage = 1;
 
 const productCards = document.querySelectorAll('.product-card');
@@ -19,6 +19,8 @@ function displayProducts(page) {
 
     prevPageButton.disabled = page === 1;
     nextPageButton.disabled = end >= productCards.length;
+
+    console.log(`Displaying products from ${start} to ${end}, page: ${page}`);
 }
 
 prevPageButton.addEventListener('click', () => {

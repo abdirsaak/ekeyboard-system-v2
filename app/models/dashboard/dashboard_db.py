@@ -91,6 +91,37 @@ class Dashboard:
             return False
         
     
+    def count_compledted_orders(self):
+        sql = """SELECT COUNT(*) from orders where order_status = "completed" """
+        try:
+
+            self.cursor.execute(sql)
+            orders = self.cursor.fetchall()
+
+            return orders
+
+
+        except Exception as e:
+            print(f"error while counting completed orders : {e}")
+
+            return False
+        
+    def count_canceld_orders(self):
+        sql = """SELECT COUNT(*) from orders where order_status = "canceled" """
+        try:
+
+            self.cursor.execute(sql)
+            orders = self.cursor.fetchall()
+
+            return orders
+
+
+        except Exception as e:
+            print(f"error while counting cancled orders : {e}")
+
+            return False
+        
+    
   
   
   

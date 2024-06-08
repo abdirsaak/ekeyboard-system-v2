@@ -39,7 +39,12 @@ def Admin_dashboard():
             print(f"all keyboards in views: {all_keyboards}")
             all_categories = dashbaord_intance.get_all_categories()
             print(f"all categories in views: {all_categories}")
-            return render_template("products/index.html",all_users = all_users, all_keyboards = all_keyboards,all_categories = all_categories)
+
+            all_completed_orders = dashbaord_intance.count_compledted_orders()
+            print(f"all completed orders: {all_completed_orders}")
+            all_canceled_orders = dashbaord_intance.count_canceld_orders()
+            print(f"all completed orders: {all_canceled_orders}")
+            return render_template("products/index.html",all_users = all_users, all_keyboards = all_keyboards,all_categories = all_categories, all_completed_orders = all_completed_orders,all_canceled_orders = all_canceled_orders)
 
         except Exception as e:
             print(f"error in dashboard views: {e}")

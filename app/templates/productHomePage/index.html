@@ -40,7 +40,7 @@
            
             <div class="flex flex-row justify-center flex flex-wrap   ">
                 <!-- <h1 class=" border-1 rounded-sm   text-gray-500 bg-white p-[6px] ">Search</h1> -->
-                <input class=" text-[13px] outline-none w-[270px] h-[40px]  rounded-sm p-[6px]" placeholder="Search">
+                <input class=" text-[13px] outline-none w-[270px] h-[40px]  rounded-sm p-[6px]" placeholder="Search" id="searchBox_3">
                 <button class=" w-[75px] h-[40px] text-[15px] ml-[10px] bg-black text-white rounded-sm px-[5px]  py-[10px] " >Search</button>
 
 
@@ -57,14 +57,23 @@
         </div>
 <!-- ............... cardt -->
 <div class="flex flex-row justify-end mt-6 ml-52 md:ml-0 lg:ml-0 md:block md:flex md:flex-row">
-    <h3 class="pt-2 text-black lg:bg-black lg:w-[150px] lg:text-white rounded-md flex justify-center history-btn cursor-pointer">History</h3>
+    <h3 class="history-btn  pt-2 text-black lg:bg-black lg:w-[150px] lg:text-white rounded-md flex justify-center cursor-pointer ">History</h3>
     <!-- .........cart icon -->
-    <div class="flex px-4 items-center cursor-pointer cart_btn "> 
+    <div class="flex px-4 items-center cursor-pointer cart_btn lg:mr-10"> 
         <span class="mr-4 font-bold text-black lg:text-white">Cart</span>
         <div class="w-10 h-10 bg-black rounded-full flex items-center justify-center text-white">{{ count_product_carts[0][0][0] if count_product_carts else 0 }}</div> 
     </div>
+
+    <div class="mr-10 md:mr-0 lg:mr-0">
+       <h4 id="userIcon" class="cursor-pointer flex justify-center items-center lg:bg-white bg-black text-white lg:text-black w-[40px] h-[40px] rounded-md"><a href="{{ url_for("user_profile") }}"><span class="text-[20px]"><i class="fa fa-user"></i></span></a></h4>
+    </div>
 </div>
 </header>
+
+
+
+
+
 <!-- ................. section cart -->
 
 
@@ -102,6 +111,12 @@
             <div class="cart_items max-h-[400px] overflow-y-auto custom-scrollbar">
                
                 {% for product_cart in product_carts %}
+                <div class=" flex justify-end">
+                    <form action="{{ url_for('home_page') }}" method="post">
+                        <input type="hidden" name="delete_product_id" value="{{ product_cart[0] }}">
+                        <button class="bg-rose-600 text-white w-[30px] h-[30px] rounded-md mr-2 mt-[2px]" type="submit"><span><i class="fa fa-trash-o"></i></span></button>
+                    </form>
+                </div>
                 <div class="flex flex-col md:flex md:flex-row md:items-center gap-x-10 px-4 border-b-2 border-gray-200 my-2 cart_item" data-id="{{ product_cart[0] }}" data-price="{{ product_cart[2] }}" data-product-id="{{ product_cart[0] }}">
                     <div>
                         <img src="/static/product_image/{{ product_cart[3] }}" alt="{{ product_cart[2] }}" class="w-[150px] h-[150px] rounded md:w-[100px] md:h-[100px] md:mt-10">
@@ -176,40 +191,39 @@
                             <tbody>
                                 {% if order_to_dict %}
                                     {% for order in order_to_dict %}
-                                    
-                                        <tr>
-                                            <td class="px-4 py-2 border-b">{{ order.user_name }}</td>
-                                            <td class="px-4 py-2 border-b">{{ order.product_name }}  </td>
-                                            <td class="px-4 py-2 border-b">{{ order.quantity }}</td>
-                                            <td class="px-4 py-2 border-b">{{ order.total }}</td>
-                                            <td class="px-4 py-2 border-b">{{ order.order_status }}</td>
-                                            <td class="px-4 py-2 border-b">{{ order.billing_name }}</td>
-                                            <td class="px-4 py-2 border-b">{{ order.billing_email }}</td>
-                                            <td class="px-4 py-2 border-b">{{ order.billing_address }}</td>
-                                            <td class="px-4 py-2 border-b">{{ order.billing_city }}</td>
-                                            <td class="px-4 py-2 border-b">{{ order.order_date  }}</td>
-                                            <td>
-                                                <form action="{{url_for("home_page")}}" method="post">
-                                                    <input type="hidden" name="order_id" value="{{ order.order_id }}">
-                                                    <div class="hide_order_btn">
-                                                        <button type="submit" class="btn_cancel bg-rose-600 text-white w-[110px] h-[40px] rounded-md mr-4">Cancel order</button>
-                                                    </div>
-                                                </form>
-                                            </td>
-                                         
-                                        </tr>
-
-                                  
+                                    <tr data-order-id="{{ order.order_id }}" data-order-status="{{ order.order_status }}">
+                                        <td class="px-4 py-2 border-b">{{ order.user_name }}</td>
+                                        <td class="px-4 py-2 border-b">{{ order.product_name }}</td>
+                                        <td class="px-4 py-2 border-b">{{ order.quantity }}</td>
+                                        <td class="px-4 py-2 border-b">{{ order.total }}</td>
+                                        <td class="px-4 py-2 border-b">{{ order.order_status }}</td>
+                                        <td class="px-4 py-2 border-b">{{ order.billing_name }}</td>
+                                        <td class="px-4 py-2 border-b">{{ order.billing_email }}</td>
+                                        <td class="px-4 py-2 border-b">{{ order.billing_address }}</td>
+                                        <td class="px-4 py-2 border-b">{{ order.billing_city }}</td>
+                                        <td class="px-4 py-2 border-b">{{ order.order_date }}</td>
+                                        <!-- <td>
+                                            <form action="{{ url_for("home_page") }}" method="post">
+                                                <input type="hidden" name="order_id" value="{{ order.order_id }}">
+                                                <div class="hide_order_btn ">
+                                                    <button type="submit" class=" btn_cancel bg-rose-600 text-white w-[110px] h-[40px] rounded-md mr-4">Cancel order</button>
+                                                </div>
+                                            </form>
+                                        </td> -->
+                                    </tr>
                                     {% endfor %}
                                 {% else %}
-                                    <tr>
-                                        <td class="px-4 py-2 border-b" colspan="10">
-                                            <h4>Wax dalab ma sameynin</h4>
-                                        </td>
-                                    </tr>
+                                <tr>
+                                    <td class="px-4 py-2 border-b" colspan="10">
+                                        <h4>Wax dalab ma sameynin</h4>
+                                    </td>
+                                </tr>
                                 {% endif %}
                             </tbody>
+                            
                         </table>
+                        
+                        
                     </div>
                 </div>
             </div>
@@ -221,58 +235,33 @@
 
 <!-- .......end section cart -->
 
-<!-- ...... waa categories iyo products -->
-    <main>
-        <!-- categories -->
-        <div class="mt-[20px]">
-            <div class="flex justify-between px-4">
-                <!-- .................. category -->
-                <div class="">
-                    <h1 class="category_icon text-[20px] font-semibold ml-[22px] cursor-pointer">
-                        <span class="md:hidden lg:hidden"><i class="fa fa-bars"></i></span> Categories
-                    </h1>
-                </div>
-            
-            </div>
-            <!-- ...................... categories -->
-            <div class="">
-                <div class="categories bg-white shadow-lg w-[400px] md:w-full lg:w-full md:bg-transparent lg:bg-transparent md:shadow-none lg:shadow-none p-2 md:p-0 lg:p-0 ml-16 md:ml-0 lg:ml-0 hidden flex flex-col md:block lg:block md:flex md:flex-row md:items-center md:justify-evenly flex flex-wrap mt-[10px] lg:flex lg:flex-row lg:items-center lg:justify-around">
-                    <h1 class="py-2 text-[18px] font-sans font-semibold text-gray-600 py-[6px]">Standard keyboards</h1>
-                    <h1 class="py-2 text-[18px] font-sans font-semibold text-gray-600 py-[6px]">Gaming keyboards</h1>
-                    <h1 class="py-2 text-[18px] font-sans font-semibold text-gray-600 py-[6px]">Mechanical keyboards</h1>
-                    <h1 class="py-2 text-[18px] font-sans font-semibold text-gray-600 py-[6px]">Wireless Keyboards</h1>
-                    <h1 class="py-2 text-[18px] font-sans font-semibold text-gray-600 py-[6px]">Projection Keyboards</h1>
-                </div>
-            </div>
-        </div>
-        <!-- promo code -->
-        <!-- <div>
-            <img class="mt-[50px] w-full h-[90px] " src="{{ url_for('static', filename='product_image/logo1.jpg') }}" alt="">
-        </div> -->
-
-        <!-- STANDARD KEYBOARD -->
-        <div class="justify-center flex flex-wrap mt-[70px]">
-            <img class="w-auto" src="{{ url_for('static', filename='website_image/poster.jpeg') }}" alt="">
-        </div>
-        
-        <div id="product-container" class="flex flex-wrap justify-center mt-[20px]">
-            <!-- Render all products using Jinja2, with pagination handled by JavaScript -->
+<main>
+    <!-- STANDARD KEYBOARD -->
+    <div class="justify-center flex flex-wrap mt-[70px]">
+        <img class="w-[800px] h-[260px]" src="{{ url_for('static', filename='website_image/poster.jpeg') }}" alt="">
+    </div>
+    
+    <div id="product-container" class="flex justify-center">
+        <div class="grid grid-cols-2 md:grid md:grid-cols-3 justify-center mt-[20px] ">
             {% for product in products %}
-            <div class="w-[22%] m-2 p-2 bg-white rounded flex flex-col items-center product-card" data-product-id="{{ product[0] }}" style="display: none;">
-                <img src="{{ url_for('static', filename='product_image/' ~ product[4]) }}" alt="" class="w-[150px] h-[150px] rounded-full">
-                <h1 class="text-[14px] font-sans font-semibold mt-2 w-full">{{ product[3] }}</h1>
-                <p class="text-left w-full">{{ product[6] }}</p>
-                <h2 class="text-red-500 text-[12px] text-left py-2 w-full font-sans font-semibold">{{ product[2] }}</h2>
-            </div>
-            {% endfor %}
+        <div class="product_container w-full m-2 p-2 bg-white rounded  product-card" data-product-id="{{ product[0] }}" data-name="{{ product[1] }}" style="display: none;">
+            <img src="{{ url_for('static', filename='product_image/' ~ product[4]) }}" alt="" class="w-[150px] h-[150px] rounded-md">
+            <h1 class="text-[14px] font-sans font-semibold mt-2 w-full">{{ product[1] }}</h1>
+            <p class="text-left w-full">{{ product[6] }}</p>
+            <h2 class="text-red-500 text-[12px] text-left py-2 w-full font-sans font-semibold">{{ product[3] }}</h2>
         </div>
+        {% endfor %}
+        </div>
+    </div>
 
-        <!-- Pagination -->
-        <div id="pagination-controls" class="flex justify-center mt-[20px]">
-            <button id="prev-page" class="bg-gray-300 px-4 py-2 mx-2 rounded">Previous</button>
-            <button id="next-page" class="bg-gray-300 px-4 py-2 mx-2 rounded">Next</button>
-        </div>
-    </main>
+    <!-- Pagination -->
+    <div id="pagination-controls" class="flex justify-end mt-[20px] mr-20">
+        <!-- <button id="prev-page" class="bg-gray-300 px-4 py-2 mx-2 rounded">Previous</button> -->
+        <button id="prev-page" class="bg-black px-4 py-2 mx-2 rounded text-white"><i class="fa fa-chevron-circle-left" aria-hidden="true"></i></button>
+        <button id="next-page" class="bg-black px-4 py-2 mx-2 rounded text-white"><i class="fa fa-chevron-circle-right" aria-hidden="true"></i></button>
+  
+    </div>
+</main>
 
 
     <!--  fooooooooooooooooooooooooooooteeeeeeeeeeeeeeeeer -->
@@ -373,13 +362,12 @@
         <!--appp  -->
         <div class="flex flex-row items justify-around flex flex-wrap bg-rose-600 h-[55px] items-center mt-[20px]">
             <div>
-                <h1 class="text-white text-[14px]">powered by opencart demo store @ 2024</h1>
+                <h1 class="text-white text-[14px]">powered by Group A</h1>
             </div>
             <div class="flex flex-row px-[10px]">
-                <img class="w-[23px] bg-rose-700 h-[23px] p-[5px] rounded-full  " src="images/cover_9.png" alt="">
-                <img class="w-[23px] bg-rose-700 h-[23px] p-[5px] rounded-full " src="images/msajid_2.png" alt="">
-                <img class="w-[29px] bg-rose-700 h-[27px] p-[5px] rounded-full "
-                    src="images/images-removebg-preview.png " alt="">
+                <span class="bg-black text-white w-[40px] h-[40px] rounded-md flex justify-center items-center mx-2"><i class="fa fa-facebook"></i></span>
+                <span class="bg-black text-white w-[40px] h-[40px] rounded-md flex justify-center items-center mx-2"><i class="fa fa-instagram"></i></span>
+                <span class="bg-black text-white w-[40px] h-[40px] rounded-md flex justify-center items-center mx-2"><i class="fa fa-twitter"></i></span>
             </div>
 
         </div>
@@ -389,89 +377,15 @@
 </body>
 
 
-<script>
-
-    let hide_order_btn = document.querySelectorAll(".hide_order_btn")
-    let btn_cancel = document.querySelector(".btn_cancel")
-    const cance_button =  () => {
-        hide_order_btn.forEach((eahc_btn) => {
-            eahc_btn.classList.add("hidden")
-        })
-    }
-    btn_cancel.addEventListener("click",cance_button)
-
-
-    setTimeout(() => {
-        cance_button()
-    }, 60000);
-
-
-
-  
-  document.querySelector('.checkout-button').addEventListener('click', () => {
-    const productQuantities = {};
-    document.querySelectorAll('.cart_items .cart_item').forEach(item => {
-        const productId = item.dataset.productId;
-        const quantity = item.querySelector('.quantity').value;
-        productQuantities[productId] = quantity;
-    });
-
-    fetch('/E-keyboard/homePage', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(productQuantities),
-    })
-    .then(response => {
-        if (response.ok) {
-            // Handle successful checkout
-            console.log('Checkout successful');
-            window.location.href = '/E-keyboard/place-order';
-        } else {
-            // Handle checkout failure
-            console.error('Checkout failed');
-        }
-    })
-    .catch(error => {
-        console.error('Error during checkout:', error);
-    });
-});
-
-
-
-
-
-   // JavaScript to handle opening and closing the History modal
-   document.addEventListener('DOMContentLoaded', (event) => {
-        const historyButton = document.querySelector('.history-btn');
-        const historyModal = document.getElementById('history-modal');
-        const closeHistoryModal = document.getElementById('close-history-modal');
-
-        historyButton.addEventListener('click', () => {
-            historyModal.style.display = 'block';
-        });
-
-        closeHistoryModal.addEventListener('click', () => {
-            historyModal.style.display = 'none';
-        });
-
-        window.addEventListener('click', (event) => {
-            if (event.target === historyModal) {
-                historyModal.style.display = 'none';
-            }
-        });
-    });
-
-
-
-</script>
 
 
 
 <script src="{{ url_for('static', filename='/js/categories.js') }}"></script>
 <script src="{{ url_for('static', filename='/js/product_view.js') }}"></script>
 <script src="{{ url_for('static', filename='/js/product_cart.js') }}"></script>
+<script src="{{ url_for('static', filename='/js/order_history.js') }}"></script>
+<script src="{{ url_for('static', filename='/js/product_filter.js') }}"></script>
+
 
 
     

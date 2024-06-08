@@ -118,7 +118,7 @@ def user_register():
 @app.route("/E-keyboard/login", methods = ["POST", "GET"])
 def user_login():
     print(f"userka ku jiro session: {session.get('user_email')}")
-    connection_status, _,customers, _ = check_connection()
+    connection_status, customers,products_instance,Orders_instance= check_connection()
     if session.get('user_email'):
         return redirect(url_for('home_page'))
     else:
@@ -170,7 +170,7 @@ def user_logout():
 def home_page():
     if session.get('user_email'):
         message = ""
-        connection_status, _, products_instance, Orders_instance = check_connection()
+        connection_status, customers, products_instance, Orders_instance = check_connection()
         user_id = session.get("user_id")
 
         if request.method == "GET":
@@ -179,7 +179,8 @@ def home_page():
             product_carts = products_instance.display_product_cart(user_id)
 
             show_order = Orders_instance.display_orders(user_id)
-
+            print(f"value of user_id: {user_id}")
+         
             order_to_dict = []
 
             for order in show_order:
@@ -198,21 +199,23 @@ def home_page():
                     "order_date": formatted_date
                 })
             print(f"views show orders: {order_to_dict}")
+       
             return render_template("productHomePage/index.html", products=products, product_carts=product_carts, count_product_carts=count_product_carts, order_to_dict=order_to_dict)
         
         elif request.method == "POST":
+            
             if request.content_type == 'application/json':
-                # This is the JSON request for updating product quantities
+                # JSON request for updating product quantities
                 product_quantities = request.json
-                print(f"Received product quantities: {product_quantities}")  # Debugging line
+                print(f"Received product quantities: {product_quantities}")
                 for product_id, quantity in product_quantities.items():
                     quantity = int(quantity)
-                    print(f"Updating product_id: {product_id} with quantity: {quantity}")  # Debugging line
+                    print(f"Updating product_id: {product_id} with quantity: {quantity}")
                     inventory_quantity = products_instance.display_product_inventory(product_id)
 
                     if inventory_quantity >= quantity:
                         update_product_cart = products_instance.update_product_cart(quantity, user_id, product_id)
-                        print(f"Updated product cart: {update_product_cart}")  # Debugging line
+                        print(f"Updated product cart: {update_product_cart}")
                     else:
                         message = "Insufficient stock for product ID {}".format(product_id)
                         products = products_instance.dispay_product_info()
@@ -222,18 +225,8 @@ def home_page():
 
                 return redirect(url_for('place_order'))
             else:
-                # This is the form submission for cancelling an order
-                order_id = request.form.get("order_id")
-                print(f"click order_id: {order_id}")
-
-                if order_id:
-                    # Call your function to cancel the order
-                    order_status = "canceled"
-                    Orders_instance.cancel_order(user_id, order_id,order_status)
-                    message = f"Order {order_id} has been cancelled."
-                else:
-                    message = "Failed to cancel the order."
-
+                
+                # Post-update process
                 products = products_instance.dispay_product_info()
                 product_carts = products_instance.display_product_cart(user_id)
                 count_product_carts = products_instance.count_product_carts(user_id)
@@ -261,36 +254,6 @@ def home_page():
         return redirect(url_for('user_login'))
 
 
-
-
-# @app.route("/E-keyboard/place-order", methods=["POST", "GET"])
-# def place_order():
-#     if session.get('user_email'):
-#         connection_status, _, products_instance = check_connection()
-#         if request.method == "GET":  
-#             user_id = session.get("user_id")
-#             product_carts = products_instance.display_product_cart(user_id)
-#             return render_template("productHomePage/place_order.html", product_carts=product_carts)
-           
-#         elif request.method == "POST":
-#             print("i am post")
-#             user_id = session.get("user_id")
-#             customer_name = request.form.get("customer_name")
-#             customer_email = request.form.get("customer_email")
-#             customer_address = request.form.get("customer_address")
-#             customer_city = request.form.get("customer_city")
-
-#             product_ids = request.form.getlist("product_id[]")
-#             product_qtys = request.form.getlist("product_qty[]")
-#             product_totals = request.form.getlist("product_total[]")
-            
-#             print(f"customer_name: {customer_name} customer_email:{customer_email} \n customer_address: {customer_address} customer_city: {customer_city} \n product_ids: {product_ids} product_qtys: {product_qtys} product_totals: {product_totals}")
-
-#             # Logic to place the order
-
-#             return redirect(url_for('home_page'))
-#     else:
-#         return redirect(url_for('user_login'))
 
 
 
@@ -365,4 +328,49 @@ def product_detail(product_id):
     # Render template with product information and success message
     return render_template('productHomePage/product_description.html', product=product,  product_id=product_id)
 
+
+
+
+
+
+
+
+
+           
+
+
+@app.route("/E-keyboard/user-profile", methods = ["GET", "POST"])
+def user_profile():
+    if session.get("user_email"):
+        connection_status, customers, products_instance, Orders_instance = check_connection()
+        user_id = session.get("user_id")
+
+        try:
+
+            if request.method == "GET":
+                user_info = customers.display_user_info(user_id)
+                print(f"user info views: {user_info}")
+                return render_template("productHomePage/user_profile.html", user_info = user_info)
+
+
+            elif request.method == "POST":
+                f_name = request.form.get("f_name")
+                s_name = request.form.get("s_name")
+                user_email = request.form.get("user_email")
+                user_password = request.form.get("user_password")
+                user_phone = request.form.get("user_phone")
+                user_address = request.form.get("user_address")
+
+                make_update_user_info = customers.update_user_info(user_id,f_name,s_name,user_email,user_password,user_phone,user_address)
+                print(f"updated user info: {make_update_user_info}")
+                return redirect(url_for("user_profile"))
+
+        except Exception as e:
+            print(f"error user profile views: {e}")
+
+            return False
+
+
+    else:
+        return redirect(url_for("user_login"))
 
