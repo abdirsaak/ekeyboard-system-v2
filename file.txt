@@ -1,2 +1,9 @@
 custom_invoice
 quotation
+
+admin:emaial : rasaaq883@gmail.com
+admin-password:  abdi@123
+
+
+
+1. waxaa ii dhiman delete user cart

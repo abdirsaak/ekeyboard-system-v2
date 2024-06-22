@@ -16,10 +16,29 @@
         <div class="space-x-12     flex flex-row justify-center md:justify-end lg:justify-end pt-[20px] px-4">
             <a class="text-white text-[14px]" href="#">{{ get_admin_name[0][0] }}</a>
             <a class="text-white text-[14px]" href="{{url_for("admin_logout")}}">Logout</a>
-            <a class="text-white text-[14px]" href="#">My prfile <i class="fa fa-caret-up"> </i></a>
+            <a class="text-white text-[14px]" href="#" id="profile_icon">My profile <i class="fa fa-caret-up"></i></a>
             </span>
 
             </div>
+
+
+            <!-- ..... profile model -->
+            <div id="profileModal" class="fixed inset-0 flex items-right justify-right bg-black bg-opacity-50 hidden">
+              <div class="bg-white rounded-lg w-96 p-4">
+                  <div class="flex justify-between items-center border-b pb-2">
+                      <h2 class="text-xl">Admin Profile</h2>
+                      <button id="closeModal" class="text-gray-500 hover:text-gray-700">&times;</button>
+                  </div>
+                  <div class="mt-4">
+                    {% for admin_detail in admin_info %}
+                      <p><strong>Name:</strong> {{ admin_detail[1] }}</p>
+                      <p class="py-6"><strong>Email:</strong> {{ admin_detail[2] }}</p>
+                   {% endfor %}
+                  </div>
+                
+              </div>
+          </div>
+          
             
 
     <!-- boxss -->
@@ -51,5 +70,12 @@
         </div>
         </div>
     </main>
+
+
+
+
+    
+
+    <script src="{{ url_for('static', filename='/js/admin_profile.js') }}"></script>
 </body>
 </html>

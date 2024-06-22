@@ -25,15 +25,21 @@
         </header>
     
 
-
+       <div class=""></div>
 
         <div  class=" ">
+            
             <div class="">
                 <div class="w-full  p-4 rounded-lg shadow-lg">
                     <div class="flex justify-between items-center pb-2 border-b">
                         <h2 class="text-lg font-semibold">orders</h2>
                        
                     </div>
+                    
+        <!-- ........ order search -->
+         <div class="">
+            <input class=" text-[13px] outline-none w-[270px] h-[40px] border-2 border-gray-200 mt-4 ml-4  rounded-sm p-[6px]" placeholder="Search orders" id="search_orders">
+         </div>
                     <div class="mt-4">
                         <div class="container mx-auto px-4 py-8">
                             <div class="overflow-x-auto">
@@ -53,10 +59,11 @@
                                             <th class="px-4 py-2 border-b">Order Date</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+
+                                    <tbody class="order-table">
                                  
                                             {% for order in all_order_to_dict %}
-                                            <tr>
+                                            <tr data-name="{{ order.product_name }}">
                                                 <td class="px-4 py-2 border-b">{{ order.order_id }}</td>
                                                 <td class="px-4 py-2 border-b">{{ order.user_name }}</td>
                                                 <td class="px-4 py-2 border-b">{{ order.product_name }}</td>
@@ -97,6 +104,11 @@
                 </div>
             </div>
         </div>
+
+
+
+
+        <script src="{{ url_for('static', filename='/js/order_search.js') }}"></script>
     
 </body>
 </html>

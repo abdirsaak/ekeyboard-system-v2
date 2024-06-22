@@ -100,6 +100,20 @@ class Admin:
         except Exception as e:
             print(f"error while geting the admin name: {e}")
             return False
+        
+
+    def get_admin_info(self):
+        sql = """
+          SELECT * FROM Adminstration;
+            """
+        try:
+            self.cursor.execute(sql)
+            admin_info = self.cursor.fetchall()
+            return admin_info
+
+        except Exception as e:
+            print(f"error while geting the  admin_info: {e}")
+            return False
 
  
 

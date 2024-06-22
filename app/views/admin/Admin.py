@@ -42,7 +42,9 @@ def main_page():
             connection_status, admin_ = check_connection()  # Define connection_status here
             if connection_status:
                 get_admin_name = admin_.get_admin_name(admin_email)
-                return render_template("/products/main_page.html", get_admin_name=get_admin_name)
+                admin_info  =admin_.get_admin_info()
+                print(f"value of admin info: {admin_info}")
+                return render_template("/products/main_page.html", get_admin_name=get_admin_name, admin_info = admin_info)
             else:
                 print(f"Connection is failed")
         else:
