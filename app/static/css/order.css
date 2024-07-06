@@ -1,0 +1,23 @@
+/* static/css/style.css */
+.custom-scrollbar {
+    height: 200px; /* Adjust height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 12px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #0A1551;
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background-color: #0A1551;
+}
+
+.custom-scrollbar {
+    scrollbar-color: #0A1551;
+    scrollbar-width: thin;
+}

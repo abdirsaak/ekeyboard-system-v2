@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/order.css') }}">
+
 </head>
 <body>
      <!-- .............. header -->
@@ -32,7 +35,7 @@
             <div class="">
                 <div class="w-full  p-4 rounded-lg shadow-lg">
                     <div class="flex justify-between items-center pb-2 border-b">
-                        <h2 class="text-lg font-semibold">orders</h2>
+                        <h2 class="text-[40px] pl-4 font-semibold">orders</h2>
                        
                     </div>
                     
@@ -40,9 +43,9 @@
          <div class="">
             <input class=" text-[13px] outline-none w-[270px] h-[40px] border-2 border-gray-200 mt-4 ml-4  rounded-sm p-[6px]" placeholder="Search orders" id="search_orders">
          </div>
-                    <div class="mt-4">
-                        <div class="container mx-auto px-4 py-8">
-                            <div class="overflow-x-auto">
+                    <div class="mt-4" >
+                        <div class="container mx-auto px-4 py-8 ">
+                            <div class="overflow-x-auto overflow-y-auto custom-scrollbar h-[70vh]">
                                 <table class="min-w-full bg-white border border-gray-200">
                                     <thead>
                                         <tr>
@@ -60,7 +63,7 @@
                                         </tr>
                                     </thead>
 
-                                    <tbody class="order-table">
+                                    <tbody class="order-table " >
                                  
                                             {% for order in all_order_to_dict %}
                                             <tr data-name="{{ order.product_name }}">
@@ -85,7 +88,11 @@
                                                         <input type="hidden" name="order_id" value="{{ order.order_id }}">
                                                         <input type="hidden" name="user_id" value="{{ order.user_id }}">
                                                         <div class=" ">
+                                                            {% if order.order_status == 'canceled' %}
+                                                            <button type="submit" class="  bg-transparent hidden text-white w-[110px] h-[40px] rounded-md mr-4">Cancel order</button>
+                                                            {% else %}
                                                             <button type="submit" class="  bg-rose-600 text-white w-[110px] h-[40px] rounded-md mr-4">Cancel order</button>
+                                                            {% endif %}
                                                         </div>
                                                     </form>
                                                 </td>
@@ -109,6 +116,7 @@
 
 
         <script src="{{ url_for('static', filename='/js/order_search.js') }}"></script>
+       
     
 </body>
 </html>

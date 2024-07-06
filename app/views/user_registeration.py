@@ -203,6 +203,13 @@ def home_page():
             return render_template("productHomePage/index.html", products=products, product_carts=product_carts, count_product_carts=count_product_carts, order_to_dict=order_to_dict)
         
         elif request.method == "POST":
+            user_id = session.get("user_id")
+            delete_product_id = request.form.get('delete_product_id')
+            delete_product = products_instance.remove_cart(user_id,delete_product_id)
+            if delete_product:
+                print("si sax ayaa loo tiry")
+            else:
+                print("errro ayaa jiro")
             
             if request.content_type == 'application/json':
                 # JSON request for updating product quantities

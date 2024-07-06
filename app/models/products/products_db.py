@@ -220,6 +220,7 @@ class Products:
             print(f"error ayaa jiro, product_qty: {e}")
             return False, f"error: {e}"
         
+        
     def remove_cart(self, user_id, product_id):
         sql = "DELETE FROM product_carts WHERE product_id = %s AND user_id = %s"
 
